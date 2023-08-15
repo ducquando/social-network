@@ -1,0 +1,14 @@
+__pycache__/
+archive/
+data/archive/
+plots/archive/
+utils/archive/
+.vscode/
+
+.DS_Store
+*.DS_Store
+**.DS_Store
+
+.ipynb_checkpoint
+*.ipynb_checkpoint
+**.ipynb_checkpoint
