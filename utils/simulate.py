@@ -40,16 +40,18 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
             init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'])
         
         if i == num_simulations-1:
+            last_simulation['network_array'] = results['network_array']
+            last_simulation['belief_array'] = results['belief_array']
+
             # Storing timesteps for visualization
             timesteps = [1, 5, 25, -1]
 
-            last_simulation['network_array'] = np.take(results['network_array'], timesteps, axis=0)
-            last_simulation['belief_array'] = np.take(results['belief_array'], timesteps, axis=0)
+            # last_simulation['network_array'] = np.take(results['network_array'], timesteps, axis=0)
+            # last_simulation['belief_array'] = np.take(results['belief_array'], timesteps, axis=0)
             last_simulation['converged_time']  = results['converged_time']
     
 
-    # last_simulation['network_array'] = [last_simulation['network_array'][0], last_simulation['network_array'][-1]]
-    # last_simulation['belief_array'] = [last_simulation['belief_array'][0], last_simulation['belief_array'][-1]]
+
 
     finish_time = time.perf_counter()
     print(
