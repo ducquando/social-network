@@ -12,5 +12,7 @@ utils/archive/
 *.ipynb_checkpoint
 **.ipynb_checkpoint
 
+# Backups
 **/*.pkl
 **/*.avi
+**/*.png
