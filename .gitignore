@@ -12,5 +12,5 @@ utils/archive/
 *.ipynb_checkpoint
 **.ipynb_checkpoint
 
-*/*.pkl
-*/*.avi
+**/*.pkl
+**/*.avi
