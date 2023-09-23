@@ -44,7 +44,6 @@ def coevolve(P: int, N: int, W: int, Q: int, A: float, B: float, beta: float, sw
         if num_iter >= network_threshold and np.array_equal(network_array[num_iter], network_array[num_iter-network_threshold]) and np.sum([np.sum(np.abs(belief_array[i] - belief_array[i-1])) for i in range(num_iter-network_threshold, num_iter)]) < belief_difference:
             # print("Network converged at time step", num_iter)
             converged = True
-            results['num_fanatics'] = num_fanatics
             results['converged_time'] = num_iter
             results['revised_b'] = revised_b
             results['revised_network'] = revised_network

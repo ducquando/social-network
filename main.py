@@ -37,11 +37,11 @@ def main():
         'fanatics_scheme': None,    # Scheme for choosing fanatics
     }
 
-    params_no_fanatics = params
+    params_no_fanatics = params.copy()
     params_no_fanatics['num_fanatics'] = [0]
     params_no_fanatics['fanatics_scheme'] = ['none']
 
-    params_fanatics = params
+    params_fanatics = params.copy()
     params_fanatics['num_fanatics'] = np.arange(30, 100, 30)
     params_fanatics['fanatics_scheme'] = ['max', 'min-max', 'mean']
 
