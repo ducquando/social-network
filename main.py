@@ -42,7 +42,7 @@ def main():
     params_no_fanatics['fanatics_scheme'] = ['none']
 
     params_fanatics = params.copy()
-    params_fanatics['num_fanatics'] = np.arange(30, 100, 30)
+    params_fanatics['num_fanatics'] = np.array([20, 25, 30, 40, 50, 60, 75, 80, 90, 100])
     params_fanatics['fanatics_scheme'] = ['max', 'min-max', 'mean']
 
     params_no_fanatics_df = generate_params_df(params_no_fanatics)
