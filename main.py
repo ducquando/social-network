@@ -15,7 +15,7 @@ from utils.simulate import simulate
 def main():
     NUM_SIMULATIONS = int(sys.argv[1])
     NUM_PROCESSORS = int(sys.argv[2])
-    TIMESTEPS = [1, 5, 25, -1]
+    TIMESTEPS = [1, 5, 20, -1]
 
     params = {
         'P': [200],     # Population size
@@ -23,15 +23,16 @@ def main():
         'N': [4],       # Personal network size
         'Q': [1],       # Number of random draws
         'W': [1],       # Number of new associates to meet each period
-        'A': [.005],    # Define shape of beta distribution
+        'A': [.005],    # Define shape of beta ßßdistribution
         # 'A': [0.003],   # for replicating purpose (same as in the paper)
         'B': [.005],    # "",
         # 'B': [0.002],   # for replicating purpose (same as in the paper)
         # Social dissonance
-        'beta': np.linspace(0.1, 1., 10),
+        'beta': [0.0, 0.1, 0.5, 0.9, 1.],
         # Period difference to check convergence
         'network_threshold': [20],
         'switching_cost': [.000001],    # Threshold for swapping friends
+        'switching_prob': [.5, 1.0],         # Threshold for consideration of swapping
         'belief_difference': [.001],    # Threshold for convergence
         'num_fanatics': None,            # Number of fanatics in population
         'fanatics_scheme': None,    # Scheme for choosing fanatics
@@ -42,7 +43,7 @@ def main():
     params_no_fanatics['fanatics_scheme'] = ['none']
 
     params_fanatics = params.copy()
-    params_fanatics['num_fanatics'] = np.array([20, 25, 30, 40, 50, 60, 75, 80, 90, 100])
+    params_fanatics['num_fanatics'] = np.array([25, 50, 75, 100])
     params_fanatics['fanatics_scheme'] = ['max', 'min-max', 'mean']
 
     params_no_fanatics_df = generate_params_df(params_no_fanatics)

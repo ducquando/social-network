@@ -22,8 +22,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
     """
     start_time = time.perf_counter()
     # Unpack the entries of the parameters for a row. The order is important -- this is the order of the columns in the params DataFrame
-    P, N, Q, W, A, B, beta, network_threshold, switching_cost, belief_difference, num_fanatics, fanatics_scheme = row.values[
-        :12]
+    P, N, Q, W, A, B, beta, network_threshold, switching_cost, switching_prob, belief_difference, num_fanatics, fanatics_scheme = row.values[
+        :13]
 
     metrics = pd.DataFrame(columns=metrics_lst)
 
@@ -32,7 +32,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
     for i in range(num_simulations):
         seed = i
         results = coevolve(P=P, N=N, Q=Q, W=W, beta=beta, A=A, B=B,
-                           network_threshold=network_threshold, switching_cost=switching_cost, belief_difference=belief_difference,
+                           network_threshold=network_threshold, switching_cost=switching_cost, 
+                           switching_prob=switching_prob, belief_difference=belief_difference,
                            num_fanatics=num_fanatics, fanatics_scheme=fanatics_scheme,
                            SEED=seed)
 
@@ -78,6 +79,7 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
                 simulate_helper, row, num_simulations, metrics_lst, timesteps)
             futures.append(future)
         for future in futures:
+            # print(future)
             row, metrics, last_simulation = future.result()
             means = metrics.mean(axis=0)
             for metric in metrics.columns:
