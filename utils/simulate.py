@@ -22,8 +22,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
     """
     start_time = time.perf_counter()
     # Unpack the entries of the parameters for a row. The order is important -- this is the order of the columns in the params DataFrame
-    P, N, Q, W, A, B, beta, network_threshold, switching_cost, belief_difference, num_fanatics, fanatics_scheme = row.values[
-        :12]
+    P, N, Q, W, A, B, beta, network_threshold, switching_cost, switching_prob, belief_difference, num_fanatics, fanatics_scheme = row.values[
+        :13]
 
     metrics = pd.DataFrame(columns=metrics_lst)
 
@@ -32,7 +32,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
     for i in range(num_simulations):
         seed = i
         results = coevolve(P=P, N=N, Q=Q, W=W, beta=beta, A=A, B=B,
-                           network_threshold=network_threshold, switching_cost=switching_cost, belief_difference=belief_difference,
+                           network_threshold=network_threshold, switching_cost=switching_cost, 
+                           switching_prob=switching_prob, belief_difference=belief_difference,
                            num_fanatics=num_fanatics, fanatics_scheme=fanatics_scheme,
                            SEED=seed)
 
@@ -40,16 +41,9 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
             init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'])
         
         if i == num_simulations-1:
-            # Storing timesteps for visualization
-            timesteps = [1, 5, 25, -1]
-
-            last_simulation['network_array'] = np.take(results['network_array'], timesteps, axis=0)
-            last_simulation['belief_array'] = np.take(results['belief_array'], timesteps, axis=0)
+            last_simulation['network_array'] = results['network_array']
+            last_simulation['belief_array'] = results['belief_array']
             last_simulation['converged_time']  = results['converged_time']
-    
-
-    # last_simulation['network_array'] = [last_simulation['network_array'][0], last_simulation['network_array'][-1]]
-    # last_simulation['belief_array'] = [last_simulation['belief_array'][0], last_simulation['belief_array'][-1]]
 
     finish_time = time.perf_counter()
     print(
@@ -85,6 +79,7 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
                 simulate_helper, row, num_simulations, metrics_lst, timesteps)
             futures.append(future)
         for future in futures:
+            # print(future)
             row, metrics, last_simulation = future.result()
             means = metrics.mean(axis=0)
             for metric in metrics.columns:
@@ -92,10 +87,10 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
                 params.loc[row, 'converged_time']  = last_simulation['converged_time']
             last_sim_networks.append(last_simulation['network_array'])
             last_sim_beliefs.append(last_simulation['belief_array'])
-        # print(params)
+
         params['network_array'] = last_sim_networks
         params['belief_array'] = last_sim_beliefs
         finish_time = time.perf_counter()
         print(f'Finished in {round(finish_time-start_time, 2)} second(s)')
-    # return params, last_sim_networks, last_sim_beliefs
+
     return params

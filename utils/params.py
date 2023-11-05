@@ -1,7 +1,5 @@
 import itertools
 import pandas as pd
-import numpy as np
-
 
 def generate_params(params: dict) -> list:
     """Generate the parameters for the simulation.

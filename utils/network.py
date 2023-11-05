@@ -1,4 +1,4 @@
-from random import sample
+from random import sample, uniform
 import numpy as np
 
 
@@ -62,7 +62,7 @@ def revise_network_old(prev_network: np.ndarray, b: np.ndarray, W: int, switchin
     return nw_revised
 
 
-def revise_network(prev_network: np.ndarray, b: np.ndarray, W: int, switching_cost: float) -> np.ndarray:
+def revise_network(prev_network: np.ndarray, b: np.ndarray, W: int, switching_cost: float, switching_prob: float) -> np.ndarray:
     """
     Revise the network of people.
 
@@ -73,6 +73,7 @@ def revise_network(prev_network: np.ndarray, b: np.ndarray, W: int, switching_co
         W (int): The number of new potential associates to meet.
         b (np.ndarray): The beliefs of each person in the network.
         switching_cost (float): The threshold for swapping friends.
+        switching_prob (float): The probability threshold for swapping friends
 
     Returns:
         revised_network: a 2D NumPy array representing the revised network of people.
@@ -81,6 +82,10 @@ def revise_network(prev_network: np.ndarray, b: np.ndarray, W: int, switching_co
     P = prev_network.shape[0]
     for i in range(P):
         # np.where returns a tuple, of which the first element is the array of indices; convert the returned numpy array to a list to remove person i
+        # Decision to switch
+        random_draw = uniform(0, 1)
+        if random_draw > switching_prob:
+            continue
         strangers = list(np.where(prev_network[i] == 0)[0])
         strangers.remove(i)
         friends = np.where(prev_network[i] == 1)[0]
