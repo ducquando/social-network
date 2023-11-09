@@ -6,7 +6,7 @@ import time
 import networkx as nx
 
 
-def coevolve(P: int, N: int, W: int, Q: int, A: float, B: float, beta: float, switching_cost: float, network_threshold: int, belief_difference: float, num_fanatics: int, fanatics_scheme: str, SEED: int):
+def coevolve(P: int, N: int, W: int, Q: int, A: float, B: float, beta: float, switching_cost: float, switching_prob: float, network_threshold: int, belief_difference: float, num_fanatics: int, fanatics_scheme: str, SEED: int):
     # start = time.perf_counter()
     np.random.seed(SEED)
     # Init
@@ -32,7 +32,7 @@ def coevolve(P: int, N: int, W: int, Q: int, A: float, B: float, beta: float, sw
         revised_b = revise_beliefs(network=prev_network, prev_b=prev_b, P=P,
                                    N=N, beta=beta, num_fanatics=num_fanatics, fanatics=fanatics)
         revised_network = revise_network(
-            prev_network=prev_network, b=revised_b, W=W, switching_cost=switching_cost)
+            prev_network=prev_network, b=revised_b, W=W, switching_cost=switching_cost, switching_prob=switching_prob)
 
         # Store the revised network and beliefs to their corresponding arrays
         belief_array.append(revised_b)
