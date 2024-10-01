@@ -7,7 +7,7 @@ from utils.coevolve import coevolve
 from utils.metrics import calculate_metrics
 
 
-def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.DataFrame, dict):
+def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> tuple[int, pd.DataFrame, dict]:
     """
     Helper method for simulate in which one set of parameters is chosen.
 

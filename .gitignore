@@ -1,18 +1,15 @@
-__pycache__/
-data/archive/
-plots/archive/
-utils/archive/
+# Environment files
 .vscode/
-
 .DS_Store
 *.DS_Store
 **.DS_Store
 
+# Cache
+__pycache__/
 .ipynb_checkpoint
 *.ipynb_checkpoint
 **.ipynb_checkpoint
 
-# Backups
-**/*.pkl
-**/*.avi
-**/*.png
+# Data and Plots
+data/*
+plots/*
