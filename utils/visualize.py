@@ -222,7 +222,7 @@ def line_plot(data, metrics, date: str, time: str, export=False) -> plt.figure:
 
     return fig
 
-def line_plot_95_interval(data, metrics, date: str, time: str, export=False) -> plt.figure:
+def line_plot_with_confidence_interval(data, metrics, date: str, time: str, export=False) -> plt.figure:
     """
     Create a line plot of the metric over the beta values.
     """
@@ -253,7 +253,7 @@ def line_plot_95_interval(data, metrics, date: str, time: str, export=False) -> 
     plt.tight_layout()
     fanatics_scheme = data["fanatics_scheme"].sample().str.cat(sep='')
     switching_prob = data["switching_prob"].sample().values[0]
-    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
+    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob} and p_value = 0.9', fontsize=16, y=1.02)
     
     # Export
     date_time = get_date_time(date, time)
