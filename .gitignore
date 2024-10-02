@@ -16,3 +16,5 @@ utils/archive/
 **/*.pkl
 **/*.avi
 **/*.png
+
+_env.yml
