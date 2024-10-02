@@ -32,7 +32,7 @@ def main():
         # Period difference to check convergence
         'network_threshold': [20],
         'switching_cost': [.000001],    # Threshold for swapping friends
-        'switching_prob': [.5, 1.0],         # Threshold for consideration of swapping
+        'switching_prob': [.1, .5, 1],         # Threshold for consideration of swapping
         'belief_difference': [.001],    # Threshold for convergence
         'num_fanatics': None,            # Number of fanatics in population
         'fanatics_scheme': None,    # Scheme for choosing fanatics
@@ -60,10 +60,7 @@ def main():
         params_fanatics_df, NUM_SIMULATIONS, NUM_PROCESSORS, TIMESTEPS)
 
     # Create a folder for the date if it does not exist
-    try:
-        os.mkdir(f'./data/{time.strftime("%y%m%d", t)}')
-    except FileExistsError:
-        pass
+    os.makedirs(f'./data/{time.strftime("%y%m%d", t)}', exist_ok=True)
 
     # Store simulation results in a pickle file (so that numpy arrays are not read as `str`)
     simulations_results_no_fanatics.to_pickle(

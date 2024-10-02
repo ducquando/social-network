@@ -59,7 +59,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> tuple[int, 
                            SEED=seed)
 
         metrics.loc[i] = calculate_metrics(
-            init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'])
+            init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'],
+            convergence_period=results['converged_time'])
         
         if i == num_simulations-1:
             last_simulation['network_array'] = results['network_array']
@@ -75,7 +76,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> tuple[int, 
 def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, timesteps: list):
     # Create a pandas DataFrame to store the simulation results for various parameterizations
     metrics_lst = ['MEAN', 'STDEV', 'BIAS', 'ENLITE', 'SECTS', 'CON', 'CLUSTERING_COEFFICIENT',
-                   'MEAN_INDEGREE', 'MEDIAN_INDEGREE', 'MODE_INDEGREE', 'MIN_INDEGREE', 'MAX_INDEGREE']
+                   'MEAN_INDEGREE', 'MEDIAN_INDEGREE', 'MODE_INDEGREE', 'MIN_INDEGREE', 'MAX_INDEGREE',
+                   'CONVERGENCE_PERIOD']
 
     for metric in metrics_lst:
         params[metric] = np.nan
@@ -112,6 +114,7 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
                 params.loc[row, 'converged_time']  = last_simulation['converged_time']
             last_sim_networks.append(last_simulation['network_array'])
             last_sim_beliefs.append(last_simulation['belief_array'])
+    
 
         params['network_array'] = last_sim_networks
         params['belief_array'] = last_sim_beliefs
