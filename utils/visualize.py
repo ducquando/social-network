@@ -181,7 +181,7 @@ def visualize_indegree(data: pd.DataFrame, date: str, time: str, export=False):
     g_indegree = sns.displot(data=temp, x='last_indegree', hue='beta', col='num_fanatics', col_wrap=4, palette=palette, multiple='stack', legend=False, stat='probability')
     g_indegree.set_axis_labels('In-degree', 'Count')
     g_indegree.set_titles('Number of fanatics: {col_name}')
-    g_indegree.fig.suptitle(f'Distribution of in-degrees ({scheme}, switching prob = {switching_prob})', y=1.05)
+    g_indegree.figure.suptitle(f'Distribution of in-degrees ({scheme}, switching prob = {switching_prob})', y=1.05)
     plt.legend(title='beta', labels=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     plt.show(g_indegree)
 
@@ -211,12 +211,49 @@ def line_plot(data, metrics, date: str, time: str, export=False) -> plt.figure:
     plt.tight_layout()
     fanatics_scheme = data["fanatics_scheme"].sample().str.cat(sep='')
     switching_prob = data["switching_prob"].sample().values[0]
-    if fanatics_scheme == 'max':
-        fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
-    elif fanatics_scheme == 'min-max':
-        fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
-    elif fanatics_scheme == 'mean':
-        fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
+    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
+    
+    # Export
+    date_time = get_date_time(date, time)
+    if export:
+        plt.savefig(f'plots/{date}/{date_time}_metrics_{fanatics_scheme}_{switching_prob}.png')
+
+    plt.show()
+
+    return fig
+
+def line_plot_95_interval(data, metrics, date: str, time: str, export=False) -> plt.figure:
+    """
+    Create a line plot of the metric over the beta values.
+    """
+    fig, axs = plt.subplots(nrows=3, ncols=4, figsize=(20, 10))
+    num_fanatics = data['num_fanatics'].unique()
+    color_palette = sns.color_palette("tab20", len(num_fanatics) * 2).as_hex()
+
+    for i, metric in enumerate(metrics):
+        # Visualize lines with confidence interval
+        curr_plot = axs[i//4][i%4]
+        
+        for j, num_fanatic in enumerate(num_fanatics):
+            data_1d = data[data['num_fanatics'] == num_fanatic]            
+            curr_plot.plot(data_1d['beta'], data_1d[metric], color=color_palette[j*2], label=num_fanatic)
+            curr_plot.fill_between(x=data_1d['beta'], y1=data_1d[f'{metric}_upper_bound'], y2=data_1d[f'{metric}_lower_bound'], color=color_palette[j*2+1], alpha=0.2)
+            
+        # Set view limit
+        if metric in ['MEAN', 'STDEV', 'BIAS', 'ENLITE', 'CON', 'CLUSTERING_COEFFICIENT']:
+            curr_plot.set_ylim(0, 1)
+        if metric in ['MEDIAN_INDEGREE', 'MODE_INDEGREE']:
+            curr_plot.set_ylim(0, 8)
+        if metric in ['MAX_INDEGREE']:
+            curr_plot.set_ylim(0, 17)
+        curr_plot.set_title(f'{metric} vs. beta')
+        curr_plot.legend(loc="upper right", title='# fanatics')
+
+    # Customization
+    plt.tight_layout()
+    fanatics_scheme = data["fanatics_scheme"].sample().str.cat(sep='')
+    switching_prob = data["switching_prob"].sample().values[0]
+    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob}', fontsize=16, y=1.02)
     
     # Export
     date_time = get_date_time(date, time)

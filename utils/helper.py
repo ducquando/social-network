@@ -26,14 +26,17 @@ def get_fanatics(data_fanatics: np.ndarray, data_no_fanatics: np.ndarray, scheme
 
     return data
 
-def get_data(date: str, time: str):
+def get_data(date: str, time: str, is_no_fanatics = True):
     path = './data/' + date + '/'
     date_time = get_date_time(date, time)
 
     path_fanatics = path + date_time + '_fanatics.pkl'
     data_fanatics = pd.read_pickle(path_fanatics)
-
-    path_no_fanatics = path + date_time + '_no_fanatics.pkl'
-    data_no_fanatics = pd.read_pickle(path_no_fanatics)
+    
+    if is_no_fanatics:
+        path_no_fanatics = path + date_time + '_no_fanatics.pkl'
+        data_no_fanatics = pd.read_pickle(path_no_fanatics)
+    else:
+        data_no_fanatics = pd.array()
     
     return data_fanatics, data_no_fanatics
