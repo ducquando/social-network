@@ -3,7 +3,8 @@ import networkx as nx
 from utils.belief import calculate_enlightenment
 
 
-def calculate_metrics(init_b: np.ndarray, revised_b: np.ndarray, revised_network: np.ndarray):
+def calculate_metrics(init_b: np.ndarray, revised_b: np.ndarray, revised_network: np.ndarray,
+                      convergence_period):
     """
     Calculate the metrics of the simulation results.
     """
@@ -33,4 +34,4 @@ def calculate_metrics(init_b: np.ndarray, revised_b: np.ndarray, revised_network
     min_indegree = np.min(indegree_lst)
     max_indegree = np.max(indegree_lst)
 
-    return [mean, stdev, bias, enlite, num_sects, con, clustering_coefficient, mean_indegree, median_indegree, mode_indegree, min_indegree, max_indegree]
+    return [mean, stdev, bias, enlite, num_sects, con, clustering_coefficient, mean_indegree, median_indegree, mode_indegree, min_indegree, max_indegree, convergence_period]
