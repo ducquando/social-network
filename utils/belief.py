@@ -1,8 +1,7 @@
 import numpy as np
 from utils.network import initialize_network
 
-
-def initialize_beliefs(P: int, Q: int, A: float, B: float, **kwargs) -> (np.ndarray, np.ndarray):
+def initialize_beliefs(P: int, Q: int, A: float, B: float, **kwargs):
     """ The distribution of possible beliefs is captured by the beta distribution with shape params A and B.
 
     The objective truth is the mean of this beta distribution, which is A/(A+B).

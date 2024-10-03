@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import pandas as pd
 import multiprocessing
@@ -6,8 +7,28 @@ import time
 from utils.coevolve import coevolve
 from utils.metrics import calculate_metrics
 
+def get_z_score_from_confident_level(confident_level):
+    lookup_table = {
+        0.9: 1.645,
+        0.95: 1.96,
+        0.99: 2.575,
+        0.995: 2.81,
+        0.999: 3.29,
+    }
+    
+    return lookup_table[confident_level]
 
-def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.DataFrame, dict):
+def calculate_statistics(metrics, confident_level=0.95):
+    z_score = get_z_score_from_confident_level(confident_level)
+    means = metrics.mean(axis=0)
+    std = metrics.std(axis=0)
+    n = len(metrics)
+    lower_bounds = means - (z_score * (std / math.sqrt(n)))
+    upper_bounds = means + (z_score * (std / math.sqrt(n)))
+    
+    return means, lower_bounds, upper_bounds
+
+def simulate_helper(row, num_simulations, metrics_lst, timesteps):
     """
     Helper method for simulate in which one set of parameters is chosen.
 
@@ -38,7 +59,8 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
                            SEED=seed)
 
         metrics.loc[i] = calculate_metrics(
-            init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'])
+            init_b=results['init_b'], revised_b=results['revised_b'], revised_network=results['revised_network'],
+            convergence_period=results['converged_time'])
         
         if i == num_simulations-1:
             last_simulation['network_array'] = results['network_array']
@@ -54,10 +76,13 @@ def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> (int, pd.Da
 def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, timesteps: list):
     # Create a pandas DataFrame to store the simulation results for various parameterizations
     metrics_lst = ['MEAN', 'STDEV', 'BIAS', 'ENLITE', 'SECTS', 'CON', 'CLUSTERING_COEFFICIENT',
-                   'MEAN_INDEGREE', 'MEDIAN_INDEGREE', 'MODE_INDEGREE', 'MIN_INDEGREE', 'MAX_INDEGREE']
+                   'MEAN_INDEGREE', 'MEDIAN_INDEGREE', 'MODE_INDEGREE', 'MIN_INDEGREE', 'MAX_INDEGREE',
+                   'CONVERGENCE_PERIOD']
 
     for metric in metrics_lst:
         params[metric] = np.nan
+        params[f'{metric}_lower_bound'] = np.nan
+        params[f'{metric}_upper_bound'] = np.nan
 
     # Store the last simulation's networks and beliefs of each parameterization
     last_sim_networks = []
@@ -81,12 +106,15 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
         for future in futures:
             # print(future)
             row, metrics, last_simulation = future.result()
-            means = metrics.mean(axis=0)
+            means, lower_bounds, upper_bounds = calculate_statistics(metrics, confident_level=0.95)
             for metric in metrics.columns:
                 params.loc[row, metric] = means[metric]
+                params.loc[row, f'{metric}_lower_bound'] = lower_bounds[metric]
+                params.loc[row, f'{metric}_upper_bound'] = upper_bounds[metric]
                 params.loc[row, 'converged_time']  = last_simulation['converged_time']
             last_sim_networks.append(last_simulation['network_array'])
             last_sim_beliefs.append(last_simulation['belief_array'])
+    
 
         params['network_array'] = last_sim_networks
         params['belief_array'] = last_sim_beliefs
