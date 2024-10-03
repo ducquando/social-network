@@ -28,7 +28,7 @@ def calculate_statistics(metrics, confident_level=0.95):
     
     return means, lower_bounds, upper_bounds
 
-def simulate_helper(row, num_simulations, metrics_lst, timesteps) -> tuple[int, pd.DataFrame, dict]:
+def simulate_helper(row, num_simulations, metrics_lst, timesteps):
     """
     Helper method for simulate in which one set of parameters is chosen.
 

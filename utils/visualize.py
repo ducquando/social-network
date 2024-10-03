@@ -253,12 +253,12 @@ def line_plot_with_confidence_interval(data, metrics, date: str, time: str, expo
     plt.tight_layout()
     fanatics_scheme = data["fanatics_scheme"].sample().str.cat(sep='')
     switching_prob = data["switching_prob"].sample().values[0]
-    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob} and p_value = 0.9', fontsize=16, y=1.02)
+    fig.suptitle(f'{fanatics_scheme} fanatic w\' switching prob = {switching_prob} and p_value = 0.95', fontsize=16, y=1.02)
     
     # Export
     date_time = get_date_time(date, time)
     if export:
-        plt.savefig(f'plots/{date}/{date_time}_metrics_{fanatics_scheme}_{switching_prob}.png')
+        plt.savefig(f'plots/{date}/{date_time}_metrics_{fanatics_scheme}_{switching_prob}.png', bbox_inches='tight')
 
     plt.show()
 
