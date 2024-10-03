@@ -106,7 +106,7 @@ def simulate(params: pd.DataFrame, num_simulations: int, num_processors: int, ti
         for future in futures:
             # print(future)
             row, metrics, last_simulation = future.result()
-            means, lower_bounds, upper_bounds = calculate_statistics(metrics, 0.9)
+            means, lower_bounds, upper_bounds = calculate_statistics(metrics, confident_level=0.95)
             for metric in metrics.columns:
                 params.loc[row, metric] = means[metric]
                 params.loc[row, f'{metric}_lower_bound'] = lower_bounds[metric]

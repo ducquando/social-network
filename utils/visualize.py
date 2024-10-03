@@ -226,7 +226,7 @@ def line_plot_with_confidence_interval(data, metrics, date: str, time: str, expo
     """
     Create a line plot of the metric over the beta values.
     """
-    fig, axs = plt.subplots(nrows=3, ncols=4, figsize=(20, 10))
+    fig, axs = plt.subplots(nrows=2, ncols=4, figsize=(20, 8))
     num_fanatics = data['num_fanatics'].unique()
     color_palette = sns.color_palette("tab20", len(num_fanatics) * 2).as_hex()
 
